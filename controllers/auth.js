@@ -53,11 +53,8 @@ exports.login = async (req, res, next) => {
       );
       const session = new Session({ user: user._id });
       await session.save();
-      res.cookie("accessToken", accessToken, {
-        expires: new Date(Date.now() + 86400 * 1000),
-      });
 
-      res.status(200).send(user);
+      res.status(200).send(accessToken);
     }
   } catch (err) {
     next(err);
@@ -83,11 +80,8 @@ exports.loginAdmin = async (req, res, next) => {
       );
       const session = new Session({ user: user._id });
       await session.save();
-      res.cookie("accessToken", accessToken, {
-        expires: new Date(Date.now() + 86400 * 1000),
-      });
 
-      res.status(200).send(user);
+      res.status(200).send(accessToken);
     } else {
       res
         .status(404)
