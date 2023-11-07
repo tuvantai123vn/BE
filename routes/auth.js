@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.post('/register' ,controllers.register);
 router.post('/login', controllers.login);
-router.delete('/logout', controllers.logout);
+router.post('/logout', controllers.logout);
 router.get('/getcart/:id' , controllers.getCart);
 router.post('/addToCart', controllers.addToCart);
 router.post('/loginadmin', controllers.loginAdmin);

@@ -202,15 +202,9 @@ exports.deleteToCart = async (req, res) => {
 exports.logout = async (req, res, next) => {
   try {
     const secret = "secret";
-    // const token = req.headers["authorization"].split(" ")[1];
-    // console.log(token);
-    console.log(req.headers["authorization"]);
-    // Lấy accessToken từ cookie
-    const accessToken = req.cookies.accessToken;
-    console.log("accessToken", accessToken);
+    const {cookie} = req.body;
 
-    const decoded = jwt.verify(accessToken, secret);
-    console.log(decoded);
+    const decoded = jwt.verify(cookie, secret);
 
     if (decoded) {
       // Xóa session dựa trên accessToken
