@@ -98,7 +98,7 @@ app.use("/order", authPage.authPage(), order);
 app.use("/mess", mess);
 app.get("/", (req, res) => {
   res.send("<h1>Deploy nodejs</h1>");
-})
+});
 
 mongoose.connect(MONGODB_URI);
 
@@ -111,22 +111,29 @@ io.on("connection", (socket) => {
     //Vì 1 bên gửi 1 bên nhận nên id_user đôi ngược nhau và category cũng vậy
     const newData = {
       id: data.id,
+      name: data.name,
       message: data.content,
       isAdmin: data.isAdmin,
     };
+    console.log("newData", newData);
 
     const postData = async () => {
-      const rooms = await Rooms.findOneAndUpdate(
-        {
-          id_user: data.id,
-        },
-        {
-          $push: { content: newData },
-        },
-        { new: true }
-      );
+      const rooms = await Rooms.findOne({ id_user: data.id });
 
-      if (!rooms) {
+      if (rooms) {
+        const updatedRooms = await Rooms.findOneAndUpdate(
+          {
+            id_user: data.id,
+          },
+          {
+            $push: { content: newData },
+          },
+          { new: true }
+        );
+        if (!updatedRooms) {
+          console.error("Failed to update existing room");
+        }
+      } else {
         // Nếu phòng chat không tồn tại, tạo mới
         const newRoom = new Rooms({
           id_user: data.id,
