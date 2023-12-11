@@ -1,4 +1,5 @@
 const Products = require("../model/Product");
+const cloudinary = require("../configs/cloudinaryConfig");
 
 exports.topProducts = async (req, res, next) => {
   try {
@@ -58,6 +59,7 @@ exports.getAll = async (req, res, next) => {
 
 exports.addProducts = async (req, res, next) => {
   const imgs = [];
+  const uploadImage = []; 
   const name = req.body.name;
   const category = req.body.category;
   const inventory = req.body.inventory;
@@ -68,7 +70,14 @@ exports.addProducts = async (req, res, next) => {
   try {
     const img = req.files;
     if (img && img.length === 4) {
-      for (let i = 0; i < 4; i++) imgs.push(img[i].path.split("\\").join("/"));
+      for (let i = 0; i < 4; i++) {
+        const results = await cloudinary.uploader.upload(img[i].path);
+        uploadImage.push({
+          url: results.secure_url,
+          publicId: results.public_id
+        })
+        imgs.push(img[i].path.split("\\").join("/"))
+      };
     }
     if (imgs.length !== 0) {
       const newPrd = new Products({

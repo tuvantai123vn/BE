@@ -73,22 +73,6 @@ const products = require("./routes/products");
 const order = require("./routes/order");
 const mess = require("./routes/mess");
 
-const multer = require("multer");
-
-const fileStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "images");
-  },
-  filename: (req, file, cb) => {
-    const originalName = file.originalname;
-    const fileName = originalName.replace(/\s+/g, ""); // Remove spaces
-    cb(null, fileName);
-  },
-});
-
-const upload = multer({ storage: fileStorage });
-
-app.use(upload.array("image"));
 
 app.use("/auth", authPage.authPage(), auth);
 
