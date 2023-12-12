@@ -9,7 +9,6 @@ const jwt = require("jsonwebtoken");
 exports.register = async (req, res, next) => {
   try {
     const email = await User.findOne({ email: req.body.email });
-    console.log(req.body);
     if (email) return res.status(400).send("Username or email already exist");
     else {
       const salt = bcrypt.genSaltSync(10);
@@ -20,9 +19,7 @@ exports.register = async (req, res, next) => {
         fullName: req.body.fullname,
         phoneNumber: req.body.phone,
       });
-      console.log(newUser);
       await newUser.save();
-      console.log("User has been created");
       return res.json({ message: "User has been created" });
     }
   } catch (err) {
@@ -64,7 +61,6 @@ exports.login = async (req, res, next) => {
 exports.loginAdmin = async (req, res, next) => {
   const { email, password } = req.body;
   const secret = "secret";
-  console.log(req.body);
 
   try {
     const user = await User.findOne({ email: email });

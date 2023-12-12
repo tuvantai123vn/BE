@@ -87,7 +87,6 @@ app.get("/", (req, res) => {
 mongoose.connect(MONGODB_URI);
 
 io.on("connection", (socket) => {
-  console.log(`Có người vừa kết nối, socketID: ${socket.id}`);
 
   //Server nhận key send_message với value data do người dùng gửi lên
   socket.on("send_message", (data) => {
@@ -99,7 +98,6 @@ io.on("connection", (socket) => {
       message: data.content,
       isAdmin: data.isAdmin,
     };
-    console.log("newData", newData);
 
     const postData = async () => {
       const rooms = await Rooms.findOne({ id_user: data.id });
@@ -136,7 +134,6 @@ io.on("connection", (socket) => {
   // Server nhận key send_order với value data do người dùng gửi lên
   // Phần này dùng để xử lý bên admin history biết được có người vừa đặt hàng
   socket.on("send_order", (data) => {
-    console.log(data);
 
     //Xử lý xong server gửi ngược lại client admin thông qua socket với key receive_order
     socket.broadcast.emit("receive_order", data);

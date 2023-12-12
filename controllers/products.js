@@ -58,44 +58,37 @@ exports.getAll = async (req, res, next) => {
 };
 
 exports.addProducts = async (req, res, next) => {
-  const imgs = [];
-  const uploadImage = []; 
+  const uploadImage = [];
   const name = req.body.name;
   const category = req.body.category;
   const inventory = req.body.inventory;
   const price = req.body.price;
   const short_desc = req.body.short_desc;
   const long_desc = req.body.long_desc;
+  const imgs = req.files.map((file) => file);
 
   try {
-    const img = req.files;
-    if (img && img.length === 4) {
-      for (let i = 0; i < 4; i++) {
-        const results = await cloudinary.uploader.upload(img[i].path);
-        uploadImage.push({
-          url: results.secure_url,
-          publicId: results.public_id
-        })
-        imgs.push(img[i].path.split("\\").join("/"))
-      };
-    }
-    if (imgs.length !== 0) {
-      const newPrd = new Products({
-        name,
-        price,
-        category,
-        inventory,
-        short_desc,
-        long_desc,
-        img1: imgs[0],
-        img2: imgs[1],
-        img3: imgs[2],
-        img4: imgs[3],
+    for (let img of imgs) {
+      const results = await cloudinary.uploader.upload(img.path);
+      uploadImage.push({
+        url: results.secure_url,
+        publicId: results.public_id,
       });
-      await newPrd.save();
-      return res.status(200).json({ message: "SUCCESS" });
     }
-    return res.status(200).json({ message: "Thất bại" });
+    const newPrd = new Products({
+      name,
+      price,
+      category,
+      inventory,
+      short_desc,
+      long_desc,
+      img1: uploadImage[0].url,
+      img2: uploadImage[1].url,
+      img3: uploadImage[2].url,
+      img4: uploadImage[3].url,
+    });
+    await newPrd.save();
+    return res.status(200).json({ message: "SUCCESS" });
   } catch (err) {
     next(err);
   }
@@ -135,15 +128,13 @@ exports.updateProduct = async (req, res, next) => {
 exports.deleteProduct = async (req, res, next) => {
   try {
     const id = req.params.id;
-    console.log(id);
 
-    // const deletedProduct = await Products.findOneAndDelete({ _id: id });
-    // if (!deletedProduct) {
-    //   return res.status(404).json({ message: 'Sản phẩm không tồn tại' });
-    // }
-    return res.status(200).json({ message: 'Xóa sản phẩm thành công' });
+    const deletedProduct = await Products.findOneAndDelete({ _id: id });
+    if (!deletedProduct) {
+      return res.status(404).json({ message: "Sản phẩm không tồn tại" });
+    }
+    return res.status(200).json({ message: "Xóa sản phẩm thành công" });
   } catch (err) {
     next(err);
   }
 };
-
