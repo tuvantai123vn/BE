@@ -69,7 +69,7 @@ exports.loginAdmin = async (req, res, next) => {
     if (!isPasswordCorrect)
       return res.status(400).send("Wrong password or username!");
 
-    if (user.role === "customer" || user.role === "admin") {
+    if (user.role === "consultant" || user.role === "admin") {
       const accessToken = jwt.sign(
         { userId: user._id.toString(), role: user.role, name: user.fullName },
         secret
